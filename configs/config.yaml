@@ -1,10 +1,27 @@
-[MySQL]
+Server:
+  RunMode: debug
+  HttpPort: 8080
+  ReadTimeout: 60
+  WriteTimeout: 60
 
+MySQL:
+  Host: 127.0.0.1
+  Port: 3306
+  DBName: go_qrcode_login
+  Username: root
+  Password: shiluo
+  Charset: utf8mb4
+  ParseTime: true
+  MaxIdleConns: 10
+  MaxOpenConns: 30
 
-[Redis]
+Redis:
+  Host: 127.0.0.1
+  Port: 6379
+  DB: 0
+  Password: 123456
 
-
-[App]
-
-
-[]
+JWT:
+  Secret: shiluo
+  Issuer: go_qrcode_login
+  Expire: 7200
