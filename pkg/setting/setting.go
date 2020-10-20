@@ -2,18 +2,32 @@ package setting
 
 import (
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
-type Setting struct {vp *viper.Viper}
+type Setting struct{ vp *viper.Viper }
 
 func NewSetting() (*Setting, error) {
 	vp := viper.New()
 	vp.SetConfigName("config")
-	vp.AddConfigPath("configs")
+	vp.AddConfigPath("configs/")
 	vp.SetConfigType("yaml")
+
 	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("fatal err: viper read config file err:%s",err))
+		panic(fmt.Errorf("viper read config file: %s", err))
 	}
-	return &Setting{vp: vp}, nil
+
+	s := &Setting{vp: vp}
+	s.WatchSettingChange()
+	return s, nil
+}
+
+func (s *Setting) WatchSettingChange() {
+	go func() {
+		s.vp.WatchConfig()
+		s.vp.OnConfigChange(func(in fsnotify.Event) {
+			_ = s.ReloadAllSection()
+		})
+	}()
 }

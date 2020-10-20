@@ -1,26 +1,21 @@
 Server:
   RunMode: debug
   HttpPort: 8080
-  ReadTimeout: 60
-  WriteTimeout: 60
-
+  ReadTimeout: 10
+  WriteTimeout: 10
 MySQL:
-  Host: 127.0.0.1
-  Port: 3306
-  DBName: go_qrcode_login
+  Host: 127.0.0.1:3306
+  DBName: sau_ossa_db
   Username: root
   Password: shiluo
   Charset: utf8mb4
   ParseTime: true
   MaxIdleConns: 10
   MaxOpenConns: 30
-
 Redis:
   Host: 127.0.0.1
-  Port: 6379
   DB: 0
   Password: 123456
-
 JWT:
   Secret: shiluo
   Issuer: go_qrcode_login

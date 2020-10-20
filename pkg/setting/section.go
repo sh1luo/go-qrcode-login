@@ -14,7 +14,6 @@ type ServerSettings struct {
 
 type MySQLSettings struct {
 	Host         string
-	Port         string
 	DBName       string
 	Username     string
 	Password     string
@@ -26,21 +25,37 @@ type MySQLSettings struct {
 
 type RedisSettings struct {
 	Host     string
-	Port     string
 	DB       int8
 	Password string
 }
 
 type JwtSettings struct {
 	Secret string
-	Iss string
+	Iss    string
 	Expire time.Duration
 }
 
-func (st *Setting) ReadSection(key string, value interface{}) error {
-	if err := st.vp.UnmarshalKey(key, value); err != nil {
-		log.Printf("%s:%s read config struct err:%s", key, value, err)
+var sections = make(map[string]interface{})
+
+func (s *Setting) ReadSection(k string, v interface{}) error {
+	if err := s.vp.UnmarshalKey(k, v); err != nil {
+		log.Printf("%s:%s read config struct err:%s", k, v, err)
 		return err
 	}
+
+	if _, ok := sections[k]; !ok {
+		sections[k] = v
+	}
+	return nil
+}
+
+func (s *Setting) ReloadAllSection() error {
+	for k, v := range sections {
+		err := s.ReadSection(k, v)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

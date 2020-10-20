@@ -1,7 +1,3 @@
-# go-qrcode-login
-
-使用Go实现的扫码登陆DEMO
-
-
+# SAU-OSSA backend
 
 正在写~

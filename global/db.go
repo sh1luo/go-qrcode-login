@@ -1,7 +1,12 @@
 package global
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/go-redis/redis/v8"
+	"github.com/jinzhu/gorm"
+)
 
+// 数据库连接实例
 var (
-	DBEngine *gorm.DB
+	DBEngine  *gorm.DB
+	RdbEngine *redis.Client
 )
