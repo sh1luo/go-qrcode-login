@@ -22,11 +22,7 @@ func (r *Response) ToResponse(data interface{}) {
 }
 
 func (r *Response) ToErrResponse(err *errcode.Error) {
-	resp := gin.H{"code": err.Code, "msg": err.Msg}
-	if data := err.Data; len(data) > 0 {
-		resp["data"] = err.Data
-	}
-	r.Ctx.JSON(err.StatusCode(), resp)
+	r.Ctx.JSON(err.StatusCode(), err)
 }
 
 // TODO: r.ToResponseList()

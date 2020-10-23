@@ -35,3 +35,8 @@ func (d *Dao) DeleteAccount(id uint) error {
 	}
 	return account.DelAccount(d.engine)
 }
+
+func (d *Dao) GetAccount(appKey string) (model.Auth, error) {
+	au := model.Auth{AppKey: appKey}
+	return au.GetAccount(d.engine)
+}

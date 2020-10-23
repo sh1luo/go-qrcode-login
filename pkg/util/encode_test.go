@@ -2,6 +2,7 @@ package util
 
 import (
 	"testing"
+	"time"
 )
 
 func TestEncodeMd5(t *testing.T) {
@@ -30,5 +31,24 @@ func TestEncodeMd5(t *testing.T) {
 }
 
 func TestEncodePasswd(t *testing.T) {
-	EncodePasswd([]byte("shiluonb"))
+	//var i = 0
+	//var dst []byte
+	//for i<10 {
+	//
+	//	dst = append(dst,[]byte(src)[:8]...)
+	//	fmt.Println()
+	//	i++
+	//}
+}
+
+func BenchmarkGetRandomString(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = Base64EncodeToString([]byte(time.Now().String()))
+	}
+}
+
+func BenchmarkGetRandomString2(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = GetRandomString(9)
+	}
 }

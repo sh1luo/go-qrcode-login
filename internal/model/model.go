@@ -22,11 +22,10 @@ func NewDBEngine(dbSetting *setting.MySQLSettings) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	fmt.Println("链接mysql成功")
-
 	db.SingularTable(true)
 	db.DB().SetMaxIdleConns(dbSetting.MaxIdleConns)
 	db.DB().SetMaxOpenConns(dbSetting.MaxOpenConns)
+	db.AutoMigrate(&Auth{}) // 自动迁移表结构
 	return db, nil
 }
 

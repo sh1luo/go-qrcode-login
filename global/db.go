@@ -7,6 +7,6 @@ import (
 
 // 数据库连接实例
 var (
-	DBEngine  *gorm.DB
-	RdbEngine *redis.Client
+	DBEngine    *gorm.DB
+	RedisEngine *redis.Client
 )

@@ -20,7 +20,7 @@ func EncodePasswd(passwd []byte) {
 		return
 	}
 
-	if err = bcrypt.CompareHashAndPassword(p, []byte("shiluon")); err != nil {
+	if err = bcrypt.CompareHashAndPassword(p, []byte("shiluo")); err != nil {
 		fmt.Println(err)
 	}
 	fmt.Println("correct")

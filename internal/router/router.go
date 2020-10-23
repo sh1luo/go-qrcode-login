@@ -8,10 +8,6 @@ import (
 func NewRouter() *gin.Engine {
 	r := gin.Default()
 	r.POST("/reg", api.RegAuth)
-	//apis1 := r.Group("api/v1")
-	//{
-	//
-	//}
-
+	r.POST("/login", api.GetAuth)
 	return r
 }
