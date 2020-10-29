@@ -2,8 +2,8 @@ package model
 
 import (
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/sh1luo/go-qrcode-login.git/pkg/setting"
 )
@@ -29,14 +29,22 @@ func NewDBEngine(dbSetting *setting.MySQLSettings) (*gorm.DB, error) {
 	return db, nil
 }
 
-func NewRedisEngine(r *setting.RedisSettings) *redis.Client {
-	if rdb := redis.NewClient(&redis.Options{
-		Addr:     r.Host,
-		Password: r.Password,
-		DB:       0,
-	}); rdb != nil {
-		return nil
-	} else {
-		return rdb
+func NewRedisEngine(r *setting.RedisSettings) *redis.Pool {
+	return &redis.Pool{
+		MaxIdle:   r.MaxIdle,
+		MaxActive: r.MaxActive,
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.Dial("tcp", r.Host)
+			if err != nil {
+				return nil, err
+			}
+			if r.Password != "" {
+				if _, err := c.Do("AUTH", r.Password); err != nil {
+					c.Close()
+					return nil, err
+				}
+			}
+			return c, err
+		},
 	}
 }

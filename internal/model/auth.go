@@ -29,8 +29,16 @@ func (au Auth) DelAccount(db *gorm.DB) error {
 	return db.Delete(&au).Error
 }
 
-func (au *Auth) GetAccount(db *gorm.DB) (at Auth, err error) {
+func (au *Auth) GetAccountByKey(db *gorm.DB) (at Auth, err error) {
 	err = db.Find(&at, "app_key = ?", au.AppKey).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return at, err
+	}
+	return at, nil
+}
+
+func (au *Auth) GetAccountByID(db *gorm.DB) (at Auth, err error) {
+	err = db.Find(&at, "id = ?", au.ID).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return at, err
 	}

@@ -1,7 +1,6 @@
 package global
 
 import (
-	"errors"
 	"fmt"
 	"github.com/sh1luo/go-qrcode-login.git/internal/model"
 	"github.com/sh1luo/go-qrcode-login.git/pkg/setting"
@@ -53,15 +52,16 @@ func setupSetting() error {
 }
 
 func setupDB() error {
-	//fmt.Println("setupDb starting...")
-
 	var err error
 	DBEngine, err = model.NewDBEngine(MySQLSetting)
 	if err != nil {
 		return err
 	}
-	if RedisEngine = model.NewRedisEngine(RedisSetting); RedisEngine != nil {
-		return errors.New("redis connected err")
+
+	if RedisConn = model.NewRedisEngine(RedisSetting); RedisConn == nil {
+		fmt.Println("connect redis err")
+		panic("connect redis err")
 	}
+
 	return nil
 }

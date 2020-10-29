@@ -6,7 +6,8 @@ import (
 	"github.com/sh1luo/go-qrcode-login.git/internal/service"
 	"github.com/sh1luo/go-qrcode-login.git/pkg/app"
 	"github.com/sh1luo/go-qrcode-login.git/pkg/errcode"
-	"github.com/sh1luo/go-qrcode-login.git/pkg/util"
+	"github.com/sh1luo/go-qrcode-login.git/pkg/gredis"
+	"log"
 )
 
 // RegAuth realize parameter binding, field verification,
@@ -34,7 +35,7 @@ func RegAuth(c *gin.Context) {
 		return
 	}
 
-	response.ToResponse(errcode.AppRegSuccess)
+	response.ToJsonResponse(errcode.AppRegSuccess)
 }
 
 //GetAuth login by AppKey and AppSecret.
@@ -55,18 +56,26 @@ func GetAuth(c *gin.Context) {
 	}
 
 	svc := service.NewService(c.Request.Context())
-	e := svc.GetAuth(&params)
+	uid, e := svc.GetAuth(&params)
 	if e != nil {
 		response.ToErrResponse(e)
 		return
 	}
 
-	//TODO return token by appKey.
-	var uuidToken []byte
-	src := util.Base64EncodeToString([]byte(params.AppKey))
-	uuidToken = append(uuidToken, []byte(src)[:8]...)
-	uuidToken = append(uuidToken, []byte{'=', '='}...)
+	// TODO NEED A CACHE INTERFACE
+	token := svc.TokenID(10)
+	err = gredis.Set(token, uid, global.JwtSetting.AppExpire)
+	if err != nil {
+		response.ToErrResponse(errcode.ServerInternalErr)
+		log.Printf("redis写入失败:%s\n", err)
+		return
+	}
 
-	data := gin.H{"token": uuidToken}
-	response.ToResponse(errcode.Success.AddParams(data))
+	response.ToJsonResponse(errcode.Success.AddParams(token))
+}
+
+func TestFunc(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"msg": "成功！",
+	})
 }

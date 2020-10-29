@@ -3,9 +3,9 @@ package errcode
 import "net/http"
 
 type Error struct {
-	Code    uint                   `json:"code"`
-	Msg     string                 `json:"msg"`
-	Details map[string]interface{} `json:"details,omitempty"`
+	Code uint     `json:"code"`
+	Msg  string   `json:"msg,omitempty"`
+	Data []string `json:"details,omitempty"`
 }
 
 //NewErr return a new custom error type,which has zero or some details info.
@@ -17,8 +17,8 @@ func NewErr(code uint, msg string) *Error {
 }
 
 // func (e Error) AddParams(key string,value interface{}) Error {
-func (e Error) AddParams(params map[string]interface{}) Error {
-	e.Details = params
+func (e Error) AddParams(params ...string) Error {
+	e.Data = params
 	return e
 }
 

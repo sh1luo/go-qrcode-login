@@ -7,6 +7,7 @@ import (
 
 type ServerSettings struct {
 	RunMode      string
+	Addr         string
 	HttpPort     string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
@@ -24,15 +25,18 @@ type MySQLSettings struct {
 }
 
 type RedisSettings struct {
-	Host     string
-	DB       int8
-	Password string
+	Host      string
+	DB        int8
+	Password  string
+	MaxIdle   int
+	MaxActive int
 }
 
 type JwtSettings struct {
-	Secret string
-	Iss    string
-	Expire time.Duration
+	Secret       string
+	Iss          string
+	AppExpire    int
+	QrCodeExpire int
 }
 
 var sections = make(map[string]interface{})

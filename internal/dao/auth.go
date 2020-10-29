@@ -36,7 +36,18 @@ func (d *Dao) DeleteAccount(id uint) error {
 	return account.DelAccount(d.engine)
 }
 
-func (d *Dao) GetAccount(appKey string) (model.Auth, error) {
-	au := model.Auth{AppKey: appKey}
-	return au.GetAccount(d.engine)
+func (d *Dao) GetAccountByKey(appKey string) (model.Auth, error) {
+	au := model.Auth{
+		AppKey: appKey,
+	}
+	return au.GetAccountByKey(d.engine)
+}
+
+func (d *Dao) GetAccountByID(id uint) (model.Auth, error) {
+	au := model.Auth{
+		Model: gorm.Model{
+			ID: id,
+		},
+	}
+	return au.GetAccountByID(d.engine)
 }

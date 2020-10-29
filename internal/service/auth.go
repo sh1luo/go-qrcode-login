@@ -13,7 +13,7 @@ type RegRequest struct {
 
 //CheckExit returns 3 results,already/not registered and ServerInternalErr.
 func (svc *Service) CheckAuthExit(regInfo *RegRequest) *errcode.Error {
-	au, err := svc.Dao.GetAccount(regInfo.AppKey)
+	au, err := svc.Dao.GetAccountByKey(regInfo.AppKey)
 	if err != nil {
 		return errcode.ServerInternalErr
 	}
@@ -29,7 +29,6 @@ func (svc *Service) CheckAuthExit(regInfo *RegRequest) *errcode.Error {
 // which returns nil when all processes exec successfully,
 // custom and specific Error type when has any error and
 // you can handle according to different error returns.
-// salt is a random string,such as salt = "O@S#S$A%"
 func (svc *Service) CreateAuth(regInfo *RegRequest) *errcode.Error {
 	returnErr := svc.CheckAuthExit(regInfo)
 	if returnErr == errcode.AppNameHasNotExit {
@@ -50,22 +49,23 @@ func (svc *Service) CreateAuth(regInfo *RegRequest) *errcode.Error {
 
 //GetAuth is the main business logic of the login part
 //by AppKey and AppSecret.
-func (svc *Service) GetAuth(regInfo *RegRequest) *errcode.Error {
-	au, err := svc.Dao.GetAccount(regInfo.AppKey)
+func (svc *Service) GetAuth(regInfo *RegRequest) (uint, *errcode.Error) {
+	au, err := svc.Dao.GetAccountByKey(regInfo.AppKey)
 	if err != nil {
-		return errcode.ServerInternalErr
+		return 0, errcode.ServerInternalErr
 	}
 
 	var curEncodePasswd string
 	curEncodePasswd, err = handlePlainPasswd([]byte(regInfo.AppSecret))
 	if au.ID <= 0 || au.AppSecret != curEncodePasswd {
-		return errcode.AppAuthFailed
+		return 0, errcode.AppAuthFailed
 	}
 
-	return nil
+	return au.ID, nil
 }
 
 func handlePlainPasswd(plainPasswd []byte) (string, error) {
+	// salt is a random string,such as salt = "O@S#S$A%"
 	var salt = []byte{0x4f, 0x40, 0x53, 0x23, 0x53, 0x24, 0x41, 0x25}
 	scryptPasswd, err := scrypt.Key(plainPasswd, salt, 1<<15, 8, 1, 32)
 	if err != nil {

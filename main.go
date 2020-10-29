@@ -13,7 +13,7 @@ func main() {
 	gin.SetMode(global.ServerSetting.RunMode)
 	route := router.NewRouter()
 	s := http.Server{
-		Addr:    ":" + global.ServerSetting.HttpPort,
+		Addr:    global.ServerSetting.HttpPort,
 		Handler: route,
 		//ReadTimeout:    global.ServerSetting.ReadTimeout,
 		//WriteTimeout:   global.ServerSetting.WriteTimeout,

@@ -14,7 +14,7 @@ func NewResponse(ctx *gin.Context) *Response {
 	return &Response{Ctx: ctx}
 }
 
-func (r *Response) ToResponse(data interface{}) {
+func (r *Response) ToJsonResponse(data interface{}) {
 	if data == nil {
 		data = gin.H{}
 	}
@@ -22,7 +22,14 @@ func (r *Response) ToResponse(data interface{}) {
 }
 
 func (r *Response) ToErrResponse(err *errcode.Error) {
-	r.Ctx.JSON(err.StatusCode(), err)
+	if err != nil {
+		r.Ctx.JSON(err.StatusCode(), err)
+	}
+}
+
+//ToImgResponse does not check whether the parameter is an empty byte array.
+func (r *Response) ToDataResponse(contentType string, data []byte) {
+	r.Ctx.Data(http.StatusOK, contentType, data)
 }
 
 // TODO: r.ToResponseList()
